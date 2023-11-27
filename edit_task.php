@@ -6,6 +6,8 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+include('db_connection.php');
+
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['id'])) {
     $taskId = $_GET['id'];
 
@@ -17,12 +19,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['id'])) {
         $task = $result->fetch_assoc();
     } else {
         // Redirect to the dashboard if the task is not found
-        header("Location: dashboard.php");
+        header("Location: admin_dashboard.php");
         exit();
     }
 } else {
     // Redirect to the dashboard if the ID is not provided
-    header("Location: dashboard.php");
+    header("Location: admin_dashboard.php");
     exit();
 }
 ?>
@@ -38,22 +40,32 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['id'])) {
 
     <h2>Edit Task</h2>
 
-    <form action="update_task.php" method="post">
-        <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
-        <label for="task_name">Task Name:</label>
-        <input type="text" name="task_name" value="<?php echo $task['name']; ?>" required>
-        <label for="step">Step:</label>
-        <input type="text" name="step" value="<?php echo $task['step']; ?>" required>
-        <label for="about">About this step:</label>
-        <textarea name="about"><?php echo $task['about']; ?></textarea>
-        <label for="deadline">Step deadline:</label>
-        <input type="datetime-local" name="deadline" value="<?php echo date('Y-m-d\TH:i', strtotime($task['deadline'])); ?>" required>
-        <label for="report">Step report:</label>
-        <textarea name="report"><?php echo $task['report']; ?></textarea>
-        <label for="attachments">Attachments:</label>
-        <input type="text" name="attachments" value="<?php echo $task['attachments']; ?>">
-        <button type="submit">Update Task</button>
-    </form>
+
+
+<form action="update_task.php" method="post">
+    <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
+    <label for="task_name">Task Name:</label>
+    <input type="text" name="task_name" value="<?php echo $task['name']; ?>" required>
+    <label for="step">Step:</label>
+    <input type="text" name="step" value="<?php echo $task['step']; ?>" required>
+    <label for="about">About this step:</label>
+    <textarea name="about"><?php echo $task['about']; ?></textarea>
+    <label for="deadline">Step deadline:</label>
+    <input type="datetime-local" name="deadline" value="<?php echo date('Y-m-d\TH:i', strtotime($task['deadline'])); ?>" required>
+    <label for="report">Step report:</label>
+    <textarea name="report"><?php echo $task['report']; ?></textarea>
+    <label for="attachments">Attachments:</label>
+    <input type="text" name="attachments" value="<?php echo $task['attachments']; ?>">
+    <label for="status">Task Status:</label>
+    <select name="status">
+        <option value="processing" <?php echo ($task['status'] === 'processing') ? 'selected' : ''; ?>>Processing</option>
+        <option value="finished" <?php echo ($task['status'] === 'finished') ? 'selected' : ''; ?>>Finished</option>
+    </select>
+    <button type="submit">Update Task</button>
+</form>
+
+
+
 
 </body>
 </html>

@@ -1,52 +1,56 @@
 <?php
 session_start();
 
-// Check if the user is logged in
-if (!isset($_SESSION['username'])) {
+// Include your database connection
+include_once("db_connection.php"); // Replace with your actual connection file
+
+if (!isset($_SESSION['admin_id'])) {
     header("Location: index.php");
     exit();
 }
 
-// Connect to the database
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "project_management_system"; // Replace with your actual database name
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Handle group creation
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $group_name = $_POST['group_name'];
-    $course_name = $_POST['course_name']; // Assuming you have an input field for course name
-    $size = $_POST['size']; // Assuming you have an input field for size
+    $course_name = $_POST['course_name'];
+    $group_name_prefix = $_POST['group_name_prefix'];
+    $num_groups = $_POST['num_groups'];
+    $group_names = $_POST['group_names'];
+    $group_sizes = $_POST['group_sizes'];
 
-    // Insert new group into 'groups' table
-    $insertGroupSql = "INSERT INTO groups (name, course_name, size) VALUES ('$group_name', '$course_name', '$size')";
-    
-    if ($conn->query($insertGroupSql) === TRUE) {
-        $lastGroupId = $conn->insert_id;
+    // Validate input
+    if (count($group_names) != $num_groups || count($group_sizes) != $num_groups) {
+        echo "Invalid input. Please make sure to provide names and sizes for all groups.";
+        exit();
+    }
 
-        // Insert the creator as the first group member
-        // $creator = $_SESSION['username'];
-        // $insertMemberSql = "INSERT INTO group_members (group_id, member_name) VALUES ('$lastGroupId', '$creator')";
-        // $conn->query($insertMemberSql);
+    // Create groups based on the input
+    for ($i = 0; $i < $num_groups; $i++) {
+        $group_name = $group_name_prefix . ($i + 1);
+        $group_size = $group_sizes[$i];
 
-        echo "Group created successfully";
-    } else {
-        echo "Error creating group: " . $conn->error;
+        // Create the group
+        createGroup($conn, $course_name, $group_name, $group_size);
+
+        echo "Group '$group_name' created successfully with size $group_size!<br>";
     }
 }
 
 // Close the database connection
 $conn->close();
 
-// Redirect back to the dashboard
-header("Location: dashboard.php");
-exit();
+// Function to create a group
+function createGroup($conn, $course_name, $group_name, $group_size) {
+    // Insert group information into the groups table
+    $sql = "INSERT INTO groups (name, course_name, size) VALUES ('$group_name', '$course_name', $group_size)";
+    $conn->query($sql);
+
+    // Get the ID of the last inserted group
+    $group_id = $conn->insert_id;
+
+    // Add members to the group in the group_members table
+    for ($i = 1; $i <= $group_size; $i++) {
+        $member_name = "Member " . $i;
+        $sql = "INSERT INTO group_members (group_id, member_name) VALUES ($group_id, '$member_name')";
+        $conn->query($sql);
+    }
+}
 ?>

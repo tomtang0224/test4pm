@@ -1,32 +1,61 @@
 <?php
-session_start();
+// Include your database connection
+include_once("db_connection.php");
 
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php");
+// Check if the user is an admin (you need to implement proper authentication)
+$isAdmin = true; // Replace this with your authentication logic
+
+// Check if the user is an admin
+if (!$isAdmin) {
+    header("Location: dashboard.php"); // Redirect to the dashboard if not an admin
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['id'])) {
-    $groupId = $_GET['id'];
+// Check if the group ID is provided
+if (!isset($_GET['id'])) {
+    header("Location: dashboard.php"); // Redirect if no group ID is provided
+    exit();
+}
 
-    // Fetch group information
-    $sql = "SELECT * FROM groups WHERE id = $groupId";
-    $result = $conn->query($sql);
+$groupId = $_GET['id'];
 
-    if ($result->num_rows == 1) {
-        $group = $result->fetch_assoc();
-    } else {
-        // Redirect to the dashboard if the group is not found
-        header("Location: dashboard.php");
-        exit();
-    }
+// Fetch group information from the database
+$groupSql = "SELECT * FROM groups WHERE id = $groupId";
+$groupResult = $conn->query($groupSql);
+
+if ($groupResult->num_rows === 1) {
+    $group = $groupResult->fetch_assoc();
 } else {
-    // Redirect to the dashboard if the ID is not provided
-    header("Location: dashboard.php");
+    echo "Group not found.";
     exit();
 }
-?>
 
+// Handle the form submission for updating group information
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve updated group information from the form
+    // Update the group in the database (you need to implement this)
+    $updateSql = "UPDATE groups SET name = '{$_POST['name']}', course_name = '{$_POST['course_name']}', size = {$_POST['size']} WHERE id = $groupId";
+
+    if ($conn->query($updateSql) === TRUE) {
+        echo "Group updated successfully";
+    } else {
+        echo "Error updating group: " . $conn->error;
+    }
+}
+
+// Handle the form submission for deleting the group
+if (isset($_POST['delete'])) {
+    // Display a confirmation dialog before deleting
+    echo "<script>
+            var confirmDelete = confirm('Are you sure you want to delete this group?');
+            if (confirmDelete) {
+                window.location.href = 'delete_group.php?id=$groupId';
+            }
+        </script>";
+}
+
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,19 +64,24 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['id'])) {
     <title>Edit Group</title>
 </head>
 <body>
-
     <h2>Edit Group</h2>
+    <form action="edit_group.php?id=<?php echo $groupId; ?>" method="post">
+        <label for="name">Group Name:</label>
+        <input type="text" name="name" value="<?php echo $group['name']; ?>" required>
 
-    <form action="update_group.php" method="post">
-        <input type="hidden" name="group_id" value="<?php echo $group['id']; ?>">
-        <label for="group_name">Group Name:</label>
-        <input type="text" name="group_name" value="<?php echo $group['name']; ?>" required>
         <label for="course_name">Course Name:</label>
         <input type="text" name="course_name" value="<?php echo $group['course_name']; ?>" required>
+
         <label for="size">Size:</label>
-        <input type="text" name="size" value="<?php echo $group['size']; ?>" required>
+        <input type="number" name="size" value="<?php echo $group['size']; ?>" required>
+
         <button type="submit">Update Group</button>
     </form>
 
+    <form action="edit_group.php?id=<?php echo $groupId; ?>" method="post">
+        <!-- Adding a hidden field to check if the delete button was clicked -->
+        <input type="hidden" name="delete" value="true">
+        <button type="submit" style="color: red;">Delete Group</button>
+    </form>
 </body>
 </html>

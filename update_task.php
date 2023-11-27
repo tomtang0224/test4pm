@@ -1,6 +1,14 @@
 <?php
 session_start();
 
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "project_management_system";
+
+// Include your database connection file
+include('db_connection.php');
+
 if (!isset($_SESSION['username'])) {
     header("Location: index.php");
     exit();
@@ -14,9 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $deadline = $_POST['deadline'];
     $report = $_POST['report'];
     $attachments = $_POST['attachments'];
+    $status = $_POST['status']; // Include status in the form
 
     // Update task information
-    $updateSql = "UPDATE tasks SET name='$task_name', step='$step', about='$about', deadline='$deadline', report='$report', attachments='$attachments' WHERE id=$taskId";
+    $updateSql = "UPDATE tasks SET name='$task_name', step='$step', about='$about', deadline='$deadline', report='$report', attachments='$attachments', status='$status' WHERE id=$taskId";
     
     if ($conn->query($updateSql) === TRUE) {
         echo "Task updated successfully";
@@ -26,6 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Redirect back to the dashboard
-header("Location: dashboard.php");
+header("Location: index.php");
 exit();
 ?>
