@@ -9,7 +9,7 @@ $dbname = "project_management_system";
 // Include your database connection file
 include('db_connection.php');
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['user_email'])) {
     header("Location: index.php");
     exit();
 }

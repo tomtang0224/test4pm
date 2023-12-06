@@ -1,8 +1,9 @@
 <?php
 session_start();
+include('db_connection.php');
 
 // Redirect to login page if not logged in
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_email'])) {
     header("Location: index.php");
     exit();
 }
@@ -24,7 +25,7 @@ if ($_SESSION['role'] == 'admin') {
 
 // Include your common footer
 include('dashboard_footer.php');
-include('db_connection.php');
+
 ?>
 
 
@@ -42,9 +43,7 @@ include('db_connection.php');
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 
     <style>
         body {
@@ -75,7 +74,7 @@ include('db_connection.php');
                     <a class="nav-link" href="#">Home </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Grouping</a>
+                    <a class="nav-link" href="edit_group.php">Grouping</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="">Task Management</a>
@@ -114,65 +113,70 @@ include('db_connection.php');
 
 
     <!-- Grouping Section -->
-    <div>
-        <!-- Grouping Section -->
-        <div class="row">
-            <h2>Group Information</h2>
+<!-- Grouping Section -->
+<div class="row">
+    <h2>Group Information</h2>
+    <br>
+    <br>
 
-            <?php
-            // Assume you have a 'groups' table with columns 'id', 'name', 'course_name', 'size'
-            $sql = "SELECT * FROM groups";
-            $result = $conn->query($sql);
+    <?php
+    // Assume you have a 'groups' table with columns 'id', 'name', 'course_name', 'size'
+    $sql = "SELECT * FROM groups";
+    $result = $conn->query($sql);
 
-            $count = 0; // Initialize counter
-            
-            if ($result->num_rows > 0) {
-                while ($group = $result->fetch_assoc()) {
-                    if ($count % 4 == 0) {
-                        // Start a new row for every 4 cards
-                        echo '</div><div class="row">';
-                    }
+    $count = 0; // Initialize counter
 
-                    echo '<div class="col-md-3">'; // Each card takes 3 columns in medium-sized screens
-                    echo '<div class="card">';
-                    echo '<img src="grp.jpg" alt="Group Avatar" style="width:70%">';
-                    echo '<div class="container">';
-                    echo '<h4><b>' . $group['name'] . '</b></h4>';
-                    echo '<p>ID: ' . $group['id'] . '</p>';
-                    echo '<p>Course Name: ' . $group['course_name'] . '</p>';
-                    echo '<p>Size: ' . $group['size'] . '</p>';
-
-                    // Display group members
-                    $groupId = $group['id'];
-                    $membersSql = "SELECT * FROM group_members WHERE group_id = $groupId";
-                    $membersResult = $conn->query($membersSql);
-
-                    if ($membersResult->num_rows > 0) {
-                        echo '<p>Group Members:</p>';
-                        echo '<ul>';
-                        while ($member = $membersResult->fetch_assoc()) {
-                            echo '<li>' . $member['member_name'] . '</li>';
-                        }
-                        echo '</ul>';
-                    } else {
-                        echo '<p>No group members.</p>';
-                    }
-
-                    echo '</div>'; // Close container
-                    echo '</div>'; // Close card
-                    echo '</div>'; // Close column
-                    $count++;
-                }
-
-                // Close the last row
-                echo '</div>';
-            } else {
-                echo '<p>No groups available.</p>';
+    if ($result->num_rows > 0) {
+        while ($group = $result->fetch_assoc()) {
+            if ($count % 4 == 0) {
+                // Start a new row for every 4 cards
+                echo '</div><div class="row">';
             }
-            ?>
 
+            echo '<div class="col-md-4">'; // Each card takes 4 columns in medium-sized screens
+            echo '<div class="card">';
+            echo '<img src="grp.jpg" alt="Group Avatar" style="width:50%">';
+            echo '<div class="container">';
+            echo '<h4><b>' . $group['name'] . '</b></h4>';
+            echo '<p>ID: ' . $group['id'] . '</p>';
+            echo '<p>Course Name: ' . $group['course_name'] . '</p>';
+            echo '<p>Size: ' . $group['size'] . '</p>';
+            echo '<p>Group member: ' . $group['user_email'] . '</p>';
 
-        </div>
+            // // Display group members
+            // $groupId = $group['id'];
+            // $membersSql = "SELECT * FROM group_members WHERE group_id = $groupId";
+            // $membersResult = $conn->query($membersSql);
+
+            // if ($membersResult->num_rows > 0) {
+            //     echo '<p>Group Members:</p>';
+            //     echo '<ul>';
+            //     while ($member = $membersResult->fetch_assoc()) {
+            //         echo '<li>' . $member['member_name'] . '</li>';
+            //     }
+            //     echo '</ul>';
+            // } else {
+            //     echo '<p>No group members.</p>';
+            // }
+
+            echo '</div>'; // Close container
+            echo '</div>'; // Close card
+            echo '</div>'; // Close column
+            $count++;
+        }
+
+        // Close the last row
+        echo '</div>';
+    } else {
+        echo '<p>No groups available.</p>';
+    }
+    ?>
+</div>
+<!-- End of Grouping Section -->
+
+<!-- End of Grouping Section -->
+
+        
 
 
 
@@ -329,6 +333,8 @@ include('db_connection.php');
             return ($totalTasks > 0) ? ($completedTasks / $totalTasks) * 100 : 0;
         }
         ?>
+        
+
         
 
 </body>
