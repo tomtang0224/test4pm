@@ -1,56 +1,54 @@
 <?php
-session_start();
+include("db_connection.php");
 
-// Include your database connection
-include_once("db_connection.php"); // Replace with your actual connection file
+   // Check if the user is logged in as an admin
+   session_start();
+   if (!isset($_SESSION['user_email']) || $_SESSION['role'] !== 'admin') {
+       header("Location: index.php");
+       exit();
+   }
 
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: index.php");
-    exit();
-}
+   
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $course_name = $_POST['course_name'];
-    $group_name_prefix = $_POST['group_name_prefix'];
-    $num_groups = $_POST['num_groups'];
-    $group_names = $_POST['group_names'];
-    $group_sizes = $_POST['group_sizes'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get user input
+    $courseId = $_POST['course_id'];
+    $numGroups = $_POST['num_groups'];
+    $groupSize = $_POST['group_size'];
 
-    // Validate input
-    if (count($group_names) != $num_groups || count($group_sizes) != $num_groups) {
-        echo "Invalid input. Please make sure to provide names and sizes for all groups.";
-        exit();
-    }
+    // Validate input (add more validation as needed)
+    if (empty($courseId) || empty($numGroups) || empty($groupSize) || !is_numeric($numGroups) || !is_numeric($groupSize) || $numGroups <= 0 || $groupSize <= 0) {
+        echo "Invalid input. Please provide valid values for course ID, number of groups, and max group size.";
+    } else {
+        include_once("db_connection.php"); // Include your database connection code
 
-    // Create groups based on the input
-    for ($i = 0; $i < $num_groups; $i++) {
-        $group_name = $group_name_prefix . ($i + 1);
-        $group_size = $group_sizes[$i];
+        // Assume you have a 'groups' table with columns: id, course_id, group_name, max_group_size
+        $tableName = "groups";
 
-        // Create the group
-        createGroup($conn, $course_name, $group_name, $group_size);
+        // Generate and insert groups
+        for ($i = 1; $i <= $numGroups; $i++) {
+            $groupName = "grp" . $i;
+            
+            // Insert into the database
+            $insertQuery = "INSERT INTO $tableName (course_id, name, size) VALUES ('$courseId', '$groupName', '$groupSize')";
+            
+            if ($conn->query($insertQuery) === FALSE) {
+                echo "Error creating group: " . $conn->error;
+                break; // Exit the loop if an error occurs
+            }
+        }
 
-        echo "Group '$group_name' created successfully with size $group_size!<br>";
-    }
-}
-
-// Close the database connection
-$conn->close();
-
-// Function to create a group
-function createGroup($conn, $course_name, $group_name, $group_size) {
-    // Insert group information into the groups table
-    $sql = "INSERT INTO groups (name, course_name, size) VALUES ('$group_name', '$course_name', $group_size)";
-    $conn->query($sql);
-
-    // Get the ID of the last inserted group
-    $group_id = $conn->insert_id;
-
-    // Add members to the group in the group_members table
-    for ($i = 1; $i <= $group_size; $i++) {
-        $member_name = "Member " . $i;
-        $sql = "INSERT INTO group_members (group_id, member_name) VALUES ($group_id, '$member_name')";
-        $conn->query($sql);
+        echo "Groups created successfully.";
+        
+        // Close the database connection
+        $conn->close();
     }
 }
+
+?>
+
+<?php
+// Redirect back to the dashboard after a delay
+header("refresh:1;url=admin_dashboard.php");
+exit();
 ?>
