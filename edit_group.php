@@ -4,7 +4,7 @@
 
     // Check if the user is logged in as an admin
     session_start();
-    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    if (!isset($_SESSION['user_email']) || $_SESSION['role'] !== 'admin') {
         header("Location: index.php");
         exit();
     }
@@ -29,10 +29,12 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Course Name</th>
+                    <th>Group ID</th>
+                    <th>Course ID</th>
+                    <th>Group Name</th>
+                   
                     <th>Size</th>
+                    <th>Group member</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -42,9 +44,10 @@
                         while ($group = $result->fetch_assoc()) {
                             echo '<tr>';
                             echo '<td>' . $group['id'] . '</td>';
+                            echo '<td>' . $group['course_id'] . '</td>';
                             echo '<td>' . $group['name'] . '</td>';
-                            echo '<td>' . $group['course_name'] . '</td>';
                             echo '<td>' . $group['size'] . '</td>';
+                            echo '<td>' . $group['user_email'] . '</td>';
                             echo '<td>';
                             echo '<a href="edit_group_form.php?id=' . $group['id'] . '" class="btn btn-primary btn-sm">Edit</a>';
                             echo '<a href="delete_group.php?id=' . $group['id'] . '" class="btn btn-danger btn-sm">Delete</a>';

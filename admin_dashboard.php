@@ -2,7 +2,7 @@
 session_start();
 include('db_connection.php');
 
-// Redirect to login page if not logged in
+//Redirect to login page if not logged in
 if (!isset($_SESSION['user_email'])) {
     header("Location: index.php");
     exit();
@@ -93,14 +93,7 @@ include('dashboard_footer.php');
     <!-- Welcome Message Box -->
     <div class="welcome-box">
         <?php
-        session_start();
-        if (isset($_SESSION['username'])) {
-            echo '<p>Hello, ' . $_SESSION['username'] . '!</p>';
-        } else {
-            header("Location: index.php");
-            exit();
-        }
-
+       echo '<p>Hello, ' . $_SESSION['user_email'] . '. You are '. $_SESSION['role']. '!</p>';
         $servername = "localhost";
         $username = "root";
         $password = "";

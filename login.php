@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         echo "Both email and password are required.";
     } else {
+        include_once("db_connection.php");
         // Assume you have a database connection
         // Replace the following with your actual database connection code
         $db_host = "localhost";
@@ -26,22 +27,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Prevent SQL injection (you may need to use prepared statements)
         $email = $conn->real_escape_string($email);
-        $password = $conn->real_escape_string($password);
 
-        // Query to check if the user exists with the provided email and password
-        $query = "SELECT * FROM users WHERE email='$email' AND password='$password'";
-
+        // Query to check if the user exists with the provided email
+        $query = "SELECT * FROM users WHERE email='$email'";
         $result = $conn->query($query);
 
-        if ($result->num_rows > 0) {
-            // User is authenticated, set session variable and redirect
-            session_start();
-            $_SESSION['user_email'] = $email; // Store the user's email in the session
-            header("Location: admin_dashboard.php");
-            exit(); // Make sure to exit after sending a header location
+        if ($result) { // Check if the query was successful
+            if ($result->num_rows > 0) {
+                $user = $result->fetch_assoc();
+
+                // Verify the password
+                if (password_verify($password, $user['password_hash'])) {
+                    // User is authenticated, set session variable and redirect
+                    session_start();
+                    $_SESSION['user_email'] = $email; 
+                    $_SESSION['role'] = $user['role'];
+                    header("Location: admin_dashboard.php");
+                    exit(); // Make sure to exit after sending a header location
+                } else {
+                    // Invalid password
+                    echo "Invalid password.";
+                }
+            } else {
+                // User not found
+                echo "User not found.";
+            }
         } else {
-            // Invalid credentials
-            echo "Invalid email or password.";
+            // Error in the query
+            echo "Error: " . $conn->error;
         }
 
         // Close the database connection
@@ -52,5 +65,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: index.php");
     exit();
 }
-
 ?>

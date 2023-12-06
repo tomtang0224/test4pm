@@ -74,26 +74,29 @@
     </style>
 </head>
 
+
+
+
 <body>
     <div class="bg-img">
         <h1>Project Management System</h1>
 
         <?php if (isset($error)): ?>
-            <p>
+            <p style="color: red;">
                 <?php echo $error; ?>
             </p>
         <?php endif; ?>
 
         <form action="login.php" method="post" class="container">
             <label for="email">Email:</label>
-            <input type="text" id="email" name="email" required>
+            <input type="email" id="email" name="email" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             <button type="submit" class="btn">Login</button>
         </form>
-
     </div>
-
 </body>
+</html>
+
 
 </html>
