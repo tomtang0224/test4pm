@@ -49,6 +49,10 @@
                 <label for="size">Size:</label>
                 <input type="number" class="form-control" name="size" value="<?php echo $group['size']; ?>" required>
             </div>
+            <div class="form-group">
+                <label for="group_member">Group Member (User Email):</label>
+                <input type="text" class="form-control" name="group_member" value="<?php echo $group['group_member']; ?>" required>
+            </div>
             <button type="submit" class="btn btn-primary">Update Group</button>
         </form>
     </div>
