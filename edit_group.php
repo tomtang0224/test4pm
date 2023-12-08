@@ -32,31 +32,81 @@
                     <th>Group ID</th>
                     <th>Course ID</th>
                     <th>Group Name</th>
-                   
                     <th>Size</th>
-                    <th>Group member</th>
+                    <th>Group members</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                    if ($result->num_rows > 0) {
-                        while ($group = $result->fetch_assoc()) {
-                            echo '<tr>';
-                            echo '<td>' . $group['id'] . '</td>';
-                            echo '<td>' . $group['course_id'] . '</td>';
-                            echo '<td>' . $group['name'] . '</td>';
-                            echo '<td>' . $group['size'] . '</td>';
-                            echo '<td>' . $group['user_email'] . '</td>';
-                            echo '<td>';
-                            echo '<a href="edit_group_form.php?id=' . $group['id'] . '" class="btn btn-primary btn-sm">Edit</a>';
-                            echo '<a href="delete_group.php?id=' . $group['id'] . '" class="btn btn-danger btn-sm">Delete</a>';
-                            echo '</td>';
-                            echo '</tr>';
+                // Assuming you have a function to fetch group details with members
+                function getGroupDetailsWithMembers($groupId)
+                {
+                    global $conn;
+                
+                    $query = "SELECT groups.*, group_members.user_email 
+                              FROM groups
+                              LEFT JOIN group_members ON groups.id = group_members.group_id
+                              WHERE groups.id = ?";
+                    
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("i", $groupId);
+                    $stmt->execute();
+                
+                    $result = $stmt->get_result();
+                
+                    $groupDetails = array(
+                        'id' => null,
+                        'course_id' => null,
+                        'name' => null,
+                        'size' => null,
+                        'user_email' => array(), // Store user emails in an array
+                    );
+                
+                    while ($row = $result->fetch_assoc()) {
+                        $groupDetails['id'] = $row['id'];
+                        $groupDetails['course_id'] = $row['course_id'];
+                        $groupDetails['name'] = $row['name'];
+                        $groupDetails['size'] = $row['size'];
+                        
+                        if ($row['user_email'] !== null) {
+                            $groupDetails['user_email'][] = $row['user_email'];
                         }
-                    } else {
-                        echo '<tr><td colspan="5">No groups available.</td></tr>';
                     }
+                
+                    return $groupDetails;
+                }
+                
+
+                if ($result->num_rows > 0) {
+                    while ($group = $result->fetch_assoc()) {
+                        echo '<tr>';
+                        echo '<td>' . $group['id'] . '</td>';
+                        echo '<td>' . $group['course_id'] . '</td>';
+                        echo '<td>' . $group['name'] . '</td>';
+                        echo '<td>' . $group['size'] . '</td>';
+                        
+                        // Fetch group members for the current group
+                        $groupDetails = getGroupDetailsWithMembers($group['id']);
+
+                        // Display group members
+                        echo '<td>';
+                        if (!empty($groupDetails['user_email'])) {
+                            echo implode(', ', $groupDetails['user_email']);
+                        } else {
+                            echo 'No members';
+                        }
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<a href="edit_group_form.php?id=' . $group['id'] . '" class="btn btn-primary btn-sm">Edit</a>';
+                        echo '<a href="delete_group.php?id=' . $group['id'] . '" class="btn btn-danger btn-sm">Delete</a>';
+                        echo '</td>';
+                        echo '</tr>';
+                    }
+                } else {
+                    echo '<tr><td colspan="6">No groups available.</td></tr>';
+                }
                 ?>
             </tbody>
         </table>

@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Insert the new user into the database
             $insert_query = "INSERT INTO users (email, username, password, role, password_hash) 
-                             VALUES ('$email', '$username', '$password', '$role', '$password_hash')";
-                             echo $insert_query;
+            VALUES ('$email', '$username', '$password', '$role', '$password_hash')";
+
 
             if ($conn->query($insert_query) === TRUE) {
                 $success_message = "User created successfully.";
