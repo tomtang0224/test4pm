@@ -47,39 +47,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
 
-            // Verify the password
-            if (password_verify($password, $users['password_hash'])) {
-                // User is authenticated, set session variables and redirect
-                session_start();
-                $_SESSION['user_email'] = $email;
-                $_SESSION['role'] = $user['role'];
-                header("Location: admin_dashboard.php");
-                exit();
-            } else if ($password == $users['password']) {
-                    session_start();
-                $_SESSION['user_email'] = $email;
-                $_SESSION['role'] = $user['role'];
-                header("Location: admin_dashboard.php");
-            } else {
-                // Invalid password
+// Verify the password
+if (password_verify($password, $users['password_hash'])) {
+    // User is authenticated, set session variables and redirect based on role
+    session_start();
+    $_SESSION['user_email'] = $email;
+    $_SESSION['role'] = $user['role'];
 
-                echo "Invalid password.";
-                header("Location: index.php");
-            }
-        } else {
-            // User not found
-            echo "User not found.";
-        }
-
-        // Close the statement
-        $stmt->close();
-
-        // Close the database connection
-        $conn->close();
+    if ($user['role'] === 'admin') {
+        header("Location: admin_dashboard.php");
+    } elseif ($user['role'] === 'teacher') {
+        header("Location: teacher_dashboard.php");
+    } elseif ($user['role'] === 'ta') {
+        header("Location: ta_dashboard.php");
+    } elseif ($user['role'] === 'student') {
+        header("Location: stu_dashboard.php");
+    } else {
+        // Handle other roles if needed
+        header("Location: index.php");
     }
+
+    exit();
+} else if ($password == $users['password']) {
+    session_start();
+    $_SESSION['user_email'] = $email;
+    $_SESSION['role'] = $user['role'];
+
+    if ($user['role'] === 'admin') {
+        header("Location: admin_dashboard.php");
+    } elseif ($user['role'] === 'teacher') {
+        header("Location: teacher_dashboard.php");
+    } elseif ($user['role'] === 'ta') {
+        header("Location: ta_dashboard.php");
+    } elseif ($user['role'] === 'student') {
+        header("Location: stu_dashboard.php");
+    } else {
+        // Handle other roles if needed
+        header("Location: index.php");
+    }
+
+    // Close the statement
+    $stmt->close();
+
+    // Close the database connection
+    $conn->close();
+    exit();
 } else {
-    // If the form is not submitted, redirect to the login page
+    // Invalid password
+    echo "Invalid password.";
     header("Location: index.php");
     exit();
 }
+        }
+    }
+}
+
+
+        
+
+
 ?>
