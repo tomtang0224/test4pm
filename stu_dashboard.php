@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_email'])) {
 
 
 // Include your common header, navigation, and other dashboard content
-include('dashboard_header.php');
+include('stu_dashboard_header.php');
 // Include your common footer
 include('dashboard_footer.php');
 

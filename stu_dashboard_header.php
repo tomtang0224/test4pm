@@ -7,7 +7,7 @@
                     <a class="nav-link" href="#">Home </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="edit_group.php">Grouping</a>
+                    <a class="nav-link" href="stu_group.php">Grouping</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="">Task Management</a>
