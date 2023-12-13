@@ -1,6 +1,7 @@
 <?php
     // Include your database connection
     include_once("db_connection.php");
+    include_once("admin_dashboard_header.php");
 
     // Check if the user is logged in as an admin
     session_start();
@@ -9,10 +10,33 @@
         exit();
     }
 
-    // Fetch all groups
-    $sql = "SELECT * FROM groups";
-    $result = $conn->query($sql);
+// Fetch all groups
+$searchType = $_GET['searchType'] ?? '';
+$searchValue = $_GET['searchValue'] ?? '';
+
+$sql = "SELECT * FROM groups";
+
+if (!empty($searchValue)) {
+    if ($searchType === 'courseId') {
+        $sql .= " WHERE course_id = '$searchValue'";
+    } elseif ($searchType === 'groupName') {
+        $sql .= " WHERE name = '$searchValue'";
+    } elseif ($searchType === 'member') {
+        $sql .= " LEFT JOIN group_members ON groups.id = group_members.group_id
+                 WHERE group_members.user_email = '$searchValue'";
+    }
+}
+
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // Display groups
+} else {
+    echo '<tr><td colspan="6">No groups matching the search criteria.</td></tr>';
+}
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +48,28 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+
+<div class="container mt-5">
+    <h2>Search Groups</h2>
+    <form method="GET" action="">
+        <div class="form-group">
+            <label for="searchType">Search by:</label>
+            <select name="searchType" class="form-control" id="searchType">
+                <option value="courseId">Course ID</option>
+                <option value="groupName">Group Name</option>
+                <option value="member">Member</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="searchValue">Search Value:</label>
+            <input type="text" name="searchValue" class="form-control" id="searchValue" placeholder="Enter search value">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="edit_group.php" class="btn btn-secondary">Reset</a>
+    </form>
+</div>
+
+
     <div class="container mt-5">
         <h2>Edit Groups</h2>
         <table class="table table-bordered">
