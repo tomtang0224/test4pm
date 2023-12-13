@@ -22,7 +22,7 @@ if ($_SESSION['role'] == 'admin') {
     echo "<h2>Welcome, Student!</h2>";
 }
 // Include your common header, navigation, and other dashboard content
-include('dashboard_header.php');
+include('admin_dashboard_header.php');
 // Include your common footer
 include('dashboard_footer.php');
 

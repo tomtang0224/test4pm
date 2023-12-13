@@ -101,7 +101,7 @@ include('dashboard_footer.php');
             echo '<p>Course ID: ' . $group['course_id'] . '</p>';
             echo '<p>Course Name: ' . $group['course_name'] . '</p>';
             echo '<p>Size: ' . $group['size'] . '</p>';
-            echo '<p>Group member: ' . $group['user_email'] . '</p>';
+            echo '<p>Group Leader: ' . $group['user_email'] . '</p>';
             echo '</div>'; // Close container
             echo '</div>'; // Close card
             echo '</div>'; // Close column

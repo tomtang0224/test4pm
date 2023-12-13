@@ -9,6 +9,16 @@
     <style>
         /* Your styles here */
 
+        body, html {
+            height: 100%;
+            margin: 0;
+        } 
+
+        h1 {
+            margin: 0;
+            padding: 10px;
+        }
+
         * {
             box-sizing: border-box;
         }
@@ -18,7 +28,7 @@
             background-image: url("Polyu.jpeg");
 
             /* Control the height of the image */
-            min-height: 680px;
+            height: 100%;
 
             /* Center and scale the image nicely */
             background-position: center;
