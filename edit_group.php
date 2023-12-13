@@ -1,7 +1,6 @@
 <?php
     // Include your database connection
     include_once("db_connection.php");
-    include_once("admin_dashboard_header.php");
 
     // Check if the user is logged in as an admin
     session_start();
