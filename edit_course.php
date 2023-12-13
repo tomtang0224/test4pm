@@ -33,7 +33,7 @@
                     <th>Course ID</th>
                     <th>Course Name</th>
                    
-                    <th>Course member</th>
+                    
                     <th>Action</th>
                 </tr>
             </thead>
@@ -46,8 +46,8 @@
                             echo '<td>' . $course['name'] . '</td>';
                             echo '<td>' . $course['user_email'] . '</td>';
                             echo '<td>';
-                            echo '<a href="edit_course_form.php?id=' . $course['Course_Comp_id'] . '" class="btn btn-primary btn-sm">Edit</a>';
-                            echo '<a href="delete_course.php?id=' . $course['Course_Comp_id'] . '" class="btn btn-danger btn-sm">Delete</a>';
+                            echo '<a href="edit_course_form.php?id=' . $course['course_id'] . '" class="btn btn-primary btn-sm">Edit</a>';
+                            echo '<a href="delete_course.php?id=' . $course['course_id'] . '" class="btn btn-danger btn-sm">Delete</a>';
                             echo '</td>';
                             echo '</tr>';
                         }

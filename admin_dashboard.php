@@ -87,7 +87,7 @@ include('dashboard_footer.php');
         <input type="text" id="course_id" name="course_id" required>
         <label for="num_groups">Number of Groups:</label>
         <input type="number" id="num_groups" name="num_groups" min="1" required>
-        <label for="group_size">Max Group Size:</label>
+        <label for="group_size">Max Group Members Size:</label>
         <input type="number" id="group_size" name="group_size" min="1" required>
         <button type="submit">Create Groups</button>
     </form>

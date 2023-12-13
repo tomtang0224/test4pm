@@ -4,7 +4,7 @@
 
     // Check if the user is logged in as an admin
     session_start();
-    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    if (!isset($_SESSION['user_email']) || $_SESSION['role'] !== 'admin') {
         header("Location: index.php");
         exit();
     }
@@ -14,10 +14,10 @@
         // Get user input
         $courseId = $_POST['course_id'];
         $courseName = $_POST['course_name'];
-        $courseMember = $_POST['course_member'];
+        
     
         // Validate input (add more validation as needed)
-        if (empty($courseName) || empty($courseMember)) {
+        if (empty($courseName) || empty($courseId)) {
             echo "Invalid input. Please provide valid values for all fields.";
         } else {
             include_once("db_connection.php"); // Include your database connection code
@@ -26,7 +26,7 @@
             $tableName = "courses";
     
             // Update the course in the database
-            $updateQuery = "UPDATE $tableName SET name='$courseName', course_member='$courseMember' WHERE course_id='$courseId'";
+            $updateQuery = "UPDATE $tableName SET name='$courseName' WHERE course_id='$courseId'";
     
             if ($conn->query($updateQuery) === TRUE) {
                 echo "Course updated successfully.";
