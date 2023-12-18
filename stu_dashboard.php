@@ -78,7 +78,7 @@ include('dashboard_footer.php');
     // and a 'group_members' table with columns 'group_id', 'user_email'
     // Fetch the groups that the student has already joined
     $userEmail = $_SESSION['user_email'];
-    $joinedGroupsQuery = "SELECT groups.id, groups.name, groups.course_id, groups.size, groups.user_email
+    $joinedGroupsQuery = "SELECT groups.id, groups.name, groups.course_id, groups.size
                           FROM groups
                           JOIN group_members ON groups.id = group_members.group_id
                           WHERE group_members.user_email = '$userEmail'";
@@ -101,7 +101,7 @@ include('dashboard_footer.php');
             echo '<p>Course ID: ' . $group['course_id'] . '</p>';
             echo '<p>Course Name: ' . $group['course_name'] . '</p>';
             echo '<p>Size: ' . $group['size'] . '</p>';
-            echo '<p>Group Leader: ' . $group['user_email'] . '</p>';
+            
             echo '</div>'; // Close container
             echo '</div>'; // Close card
             echo '</div>'; // Close column
@@ -109,7 +109,7 @@ include('dashboard_footer.php');
         }
     } else {
         // If the student has not joined any groups, display available groups for their courses
-        $coursesQuery = "SELECT course_id FROM courses WHERE user_email='$userEmail'";
+        $coursesQuery = "SELECT Course_id FROM Course_members WHERE User_email='$userEmail'";
         $coursesResult = $conn->query($coursesQuery);
 
         if ($coursesResult->num_rows > 0) {
