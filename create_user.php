@@ -1,5 +1,5 @@
 <?php
-
+include("db_connection.php");
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get user input
@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($username) || empty($password) || empty($role)) {
         $error_message = "All fields are required.";
     } else {
-       // include_once("db_connection.php");
+        // include_once("db_connection.php");
 
         // Assume you have a database connection
         // Replace the following with your actual database connection code
@@ -40,10 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($check_result->num_rows > 0) {
             $error_message = "User with this email already exists.";
         } else {
-            
             // Insert the new user into the database
-            $insert_query = "INSERT INTO users (email, username, password, role, password_hash) 
-            VALUES ('$email', '$username', '$password', '$role', '$password_hash')";
+            $insert_query = "INSERT INTO users (email, username, role, password_hash) 
+VALUES ('$email', '$username', '$role', '$password_hash')";
 
 
             if ($conn->query($insert_query) === TRUE) {
@@ -62,41 +61,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration</title>
     <!-- Add any additional styles or scripts here -->
 </head>
+
 <body>
 
-<?php
-// Display success or error messages
-if (isset($success_message)) {
-    echo "<p style='color: green;'>$success_message</p>";
-} elseif (isset($error_message)) {
-    echo "<p style='color: red;'>$error_message</p>";
-}
-?>
+    <?php
+    // Display success or error messages
+    if (isset($success_message)) {
+        echo "<p style='color: green;'>$success_message</p>";
+    } elseif (isset($error_message)) {
+        echo "<p style='color: red;'>$error_message</p>";
+    }
+    ?>
 
-<form action="" method="post" class="container">
-    <label for="email">Email:</label>
-    <input type="text" id="email" name="email" required>
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-    <label for="role">Role:</label>
-    <select id="role" name="role" required>
-        <option value="admin">Admin</option>
-        <option value="teacher">Teacher</option>
-        <option value="TA">TA</option>
-        <option value="student">Student</option>
-    </select>
-    <button type="submit" class="btn">Register</button>
-</form>
+    <form action="" method="post" class="container">
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+            <option value="admin">Admin</option>
+            <option value="teacher">Teacher</option>
+            <option value="TA">TA</option>
+            <option value="student">Student</option>
+        </select>
+        <button type="submit" class="btn">Register</button>
+    </form>
 
-<!-- Add any additional content or links here -->
+    <!-- Add any additional content or links here -->
 
 </body>
+
 </html>

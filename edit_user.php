@@ -38,6 +38,9 @@ $result = $conn->query($sql);
             $sql = "SELECT * FROM users WHERE email LIKE '%$searchValue%'";
         } elseif ($searchType === 'username') {
             $sql = "SELECT * FROM users WHERE username LIKE '%$searchValue%'";
+        }
+            elseif ($searchType === 'role') {
+                $sql = "SELECT * FROM users WHERE role LIKE '%$searchValue%'";
         } else {
             // Invalid search type, handle accordingly
             echo "Invalid search type.";
@@ -52,30 +55,31 @@ $result = $conn->query($sql);
     $result = $conn->query($sql);
     ?>
 
-    <div class="container mt-5">
-        <h2 class="mb-4">Search User</h2>
-        <form method="GET" action="">
-            <div class="form-row">
-                <div class="form-group col-md-4">
-                    <label for="searchType">Search by:</label>
-                    <select name="searchType" class="form-control" id="searchType">
-                        <option value="email">Email</option>
-                        <option value="username">Username</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="searchValue">Search Value:</label>
-                    <input type="text" name="searchValue" class="form-control" id="searchValue"
-                        placeholder="Enter search value">
-                </div>
-                <div class="form-group col-md-2">
-                    <button type="submit" class="btn btn-primary btn-block">Search</button>
-                </div>
+<div class="container mt-5">
+    <h2 class="mb-4">Search User</h2>
+    <form method="GET" action="">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="searchType">Search by:</label>
+                <select name="searchType" class="form-control" id="searchType">
+                    <option value="email">Email</option>
+                    <option value="username">Username</option>
+                    <option value="role">Role</option> <!-- Added option for role -->
+                </select>
             </div>
-            <!-- Add Reset button to clear search filters -->
-            <a href="edit_user.php" class="btn btn-secondary">Reset</a>
-        </form>
-    </div>
+            <div class="form-group col-md-6">
+                <label for="searchValue">Search Value:</label>
+                <input type="text" name="searchValue" class="form-control" id="searchValue"
+                    placeholder="Enter search value">
+            </div>
+            <div class="form-group col-md-2">
+                <button type="submit" class="btn btn-primary btn-block">Search</button>
+            </div>
+        </div>
+        <!-- Add Reset button to clear search filters -->
+        <a href="edit_user.php" class="btn btn-secondary">Reset</a>
+    </form>
+</div>
 
     <div class="container mt-5">
         <h2 class="mb-4">Edit Users</h2>
@@ -88,6 +92,7 @@ $result = $conn->query($sql);
                 <tr>
                     <th>Email</th>
                     <th>Username</th>
+                    <th>Role</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -98,6 +103,7 @@ $result = $conn->query($sql);
                         echo '<tr>';
                         echo '<td>' . $user['email'] . '</td>';
                         echo '<td>' . $user['username'] . '</td>';
+                        echo '<td>' . $user['role'] . '</td>';
                         echo '<td>';
                         echo '<a href="edit_user_form.php?email=' . $user['email'] . '" class="btn btn-primary btn-sm">Edit</a>';
                         echo '<a href="delete_user.php?email=' . $user['email'] . '" class="btn btn-danger btn-sm">Delete</a>';
