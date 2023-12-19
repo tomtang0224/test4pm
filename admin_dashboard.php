@@ -3,7 +3,7 @@ session_start();
 include('db_connection.php');
 
 //Redirect to login page if not logged in
-if (!isset($_SESSION['user_email'])) {
+if (!isset($_SESSION['user_email']) || $_SESSION['role'] !== 'admin') {
     header("Location: index.php");
     exit();
 }
