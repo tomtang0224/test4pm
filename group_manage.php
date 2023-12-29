@@ -8,6 +8,10 @@ if (!isset($_SESSION['user_email'])) {
     exit();
 }
 
+if ($_SESSION['role'] != 'teacher') {
+    header("Location: index.php");
+}
+
 // Include your common header, navigation, and other dashboard content
 include('teacher_dashboard_header.php');
 // Include your common footer

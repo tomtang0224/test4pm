@@ -8,7 +8,9 @@ if (!isset($_SESSION['user_email'])) {
     exit();
 }
 
-
+if ($_SESSION['role'] != 'student') {
+    header("Location: index.php");
+}
 
 // Include your common header, navigation, and other dashboard content
 include('stu_dashboard_header.php');
@@ -16,8 +18,6 @@ include('stu_dashboard_header.php');
 include('dashboard_footer.php');
 
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -37,346 +37,87 @@ include('dashboard_footer.php');
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        .welcome-box {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #f5c6cb;
-            border-radius: 5px;
         }
     </style>
 
 </head>
 
 <body>
-    <!-- Welcome Message Box -->
-    <div class="welcome-box">
+    <div class="container mt-5">
+        <h2>Courses</h2>
+
         <?php
-        echo '<p>Hello, ' . $_SESSION['user_email'] . '. You are ' . $_SESSION['role'] . '!</p>';
         $servername = "localhost";
         $username = "root";
         $password = "";
         $dbname = "project_management_system";
+        $email = $_SESSION['user_email'];
 
         $conn = new mysqli($servername, $username, $password, $dbname);
 
-        ?>
-    </div>
+        $searchType = $_GET['searchType'] ?? '';
+        $searchValue = $_GET['searchValue'] ?? '';
 
-<!-- Grouping Section -->
-<div class="row">
-    <h2>Group Information</h2>
-    <br>
-    <br>
+        $sql = "SELECT cm.Course_id, c.name FROM course_members cm
+                INNER JOIN courses c ON cm.Course_id = c.course_id
+                WHERE cm.User_email = '$email'";
 
-    <?php
-    // Assume you have a 'groups' table with columns 'id', 'name', 'course_name', 'size'
-    // and a 'group_members' table with columns 'group_id', 'user_email'
-    // Fetch the groups that the student has already joined
-    $userEmail = $_SESSION['user_email'];
-    $joinedGroupsQuery = "SELECT groups.id, groups.name, groups.course_id, groups.size
-                          FROM groups
-                          JOIN group_members ON groups.id = group_members.group_id
-                          WHERE group_members.user_email = '$userEmail'";
-    $joinedGroupsResult = $conn->query($joinedGroupsQuery);
-
-    $count = 0; // Initialize counter
-
-    if ($joinedGroupsResult->num_rows > 0) {
-        while ($group = $joinedGroupsResult->fetch_assoc()) {
-            if ($count % 4 == 0) {
-                // Start a new row for every 4 cards
-                echo '</div><div class="row">';
+        if (!empty($searchValue)) {
+            if ($searchType === 'courseId') {
+                $sql .= " AND c.course_id = '$searchValue'";
+            } elseif ($searchType === 'courseName') {
+                $sql .= " AND c.name = '$searchValue'";
             }
-
-            echo '<div class="col-md-4">'; // Each card takes 4 columns in medium-sized screens
-            echo '<div class="card">';
-            echo '<img src="grp.jpg" alt="Group Avatar" style="width:50%">';
-            echo '<div class="container">';
-            echo '<h4><b>' . $group['name'] . '</b></h4>';
-            echo '<p>Course ID: ' . $group['course_id'] . '</p>';
-            echo '<p>Course Name: ' . $group['course_name'] . '</p>';
-            echo '<p>Size: ' . $group['size'] . '</p>';
-            
-            echo '</div>'; // Close container
-            echo '</div>'; // Close card
-            echo '</div>'; // Close column
-            $count++;
-        }
-    } else {
-        // If the student has not joined any groups, display available groups for their courses
-        $coursesQuery = "SELECT Course_id FROM Course_members WHERE User_email='$userEmail'";
-        $coursesResult = $conn->query($coursesQuery);
-
-        if ($coursesResult->num_rows > 0) {
-            while ($course = $coursesResult->fetch_assoc()) {
-                // Fetch available groups for each course
-                $availableGroupsQuery = "SELECT * FROM groups WHERE course_id='{$course['course_id']}'";
-                $availableGroupsResult = $conn->query($availableGroupsQuery);
-
-                while ($group = $availableGroupsResult->fetch_assoc()) {
-                    if ($count % 4 == 0) {
-                        // Start a new row for every 4 cards
-                        echo '</div><div class="row">';
-                    }
-
-                    echo '<div class="col-md-4">'; // Each card takes 4 columns in medium-sized screens
-                    echo '<div class="card">';
-                    echo '<img src="grp.jpg" alt="Group Avatar" style="width:50%">';
-                    echo '<div class="container">';
-                    echo '<h4><b>' . $group['name'] . '</b></h4>';
-                    echo '<p>Course ID: ' . $group['course_id'] . '</p>';
-                    echo '<p>Course Name: ' . $group['course_name'] . '</p>';
-                    echo '<p>Size: ' . $group['size'] . '</p>';
-                    echo '</div>'; // Close container
-                    echo '</div>'; // Close card
-                    echo '</div>'; // Close column
-                    $count++;
-                }
-            }
-        } else {
-            echo '<p>You are not registered for any courses.</p>';
-        }
-    }
-    ?>
-</div>
-<!-- End of Grouping Section -->
-
-
-
-
-    <!-- Task Management Section -->
-    <div id="taskManagementSection">
-        <h2>Task Management</h2>
-        <h3>Overall progress</h3>
-        <br>
-
-        <!-- Overall Progress Bar -->
-        <?php
-        // Assuming you have a 'group_members' table to associate students with groups
-        $groupMembersSql = "SELECT group_id FROM group_members WHERE user_email = '{$_SESSION['user_email']}'";
-        $groupMembersResult = $conn->query($groupMembersSql);
-
-        $groupIds = array();
-        while ($groupMember = $groupMembersResult->fetch_assoc()) {
-            $groupIds[] = $groupMember['group_id'];
         }
 
-        // Display overall progress bar for each group the student belongs to
-        if (!empty($groupIds)) {
-            foreach ($groupIds as $groupId) {
-                $tasksSql = "SELECT * FROM tasks WHERE group_id = $groupId";
-                $tasksResult = $conn->query($tasksSql);
-
-                $totalTasks = 0;
-                $completedTasks = 0;
-
-                if ($tasksResult->num_rows > 0) {
-                    while ($task = $tasksResult->fetch_assoc()) {
-                        $totalTasks++;
-
-                        // Check if the task is completed
-                        if ($task['status'] === 'finished') {
-                            $completedTasks++;
-                        }
-                    }
-
-                    // Calculate the overall progress percentage
-                    $overallProgress = ($totalTasks > 0) ? (($completedTasks / $totalTasks) * 100) : 0;
-
-                    // Choose the color based on overall progress
-                    $colorClass = ($overallProgress >= 50) ? 'bg-success' : 'bg-danger';
-
-                    // Display the overall progress bar with a unique ID
-                    echo '<div class="progress" style="height: 30px;">';
-                    echo '<div class="progress-bar ' . $colorClass . '" role="progressbar" style="width: ' . $overallProgress . '%" aria-valuenow="' . $overallProgress . '" aria-valuemin="0" aria-valuemax="100">' . $overallProgress . '%</div>';
-                    echo '</div>';
-                } else {
-                    echo '<p>No tasks available for Group ID: ' . $groupId . '</p>';
-                }
-            }
-        } else {
-            echo '<p>You are not a member of any group.</p>';
-        }
+        $result = $conn->query($sql);
         ?>
 
-
-
-        <br>
-
-        <?php
-        // Assuming you have a 'group_members' table to associate students with groups
-        $groupMembersSql = "SELECT group_id FROM group_members WHERE user_email = '{$_SESSION['user_email']}'";
-        $groupMembersResult = $conn->query($groupMembersSql);
-
-        $groupIds = array();
-        while ($groupMember = $groupMembersResult->fetch_assoc()) {
-            $groupIds[] = $groupMember['group_id'];
-        }
-
-        // Display tasks only for the groups the student belongs to
-        if (!empty($groupIds)) {
-            $groupIdsString = implode(',', $groupIds);
-
-            $tasksSql = "SELECT tasks.*
-                FROM tasks
-                INNER JOIN groups ON tasks.group_id = groups.id
-                WHERE groups.id IN ($groupIdsString)";
-
-            $tasksResult = $conn->query($tasksSql);
-
-            if ($tasksResult->num_rows > 0) {
-                while ($task = $tasksResult->fetch_assoc()) {
-                    echo '<div class="card">';
-                    echo '<div class="container">';
-                    echo '<h4><b>' . $task['name'] . '</b></h4>';
-                    // Add progress bar element
-                    echo '<div class="progress">';
-                    echo '<div class="progress-bar" role="progressbar" style="width: ' . calculateProgress($task) . '%" aria-valuenow="' . calculateProgress($task) . '" aria-valuemin="0" aria-valuemax="100">' . calculateProgress($task) . '%</div>';
-                    echo '</div>';
-                    echo '<p>Step: ' . $task['step'] . '</p>';
-                    echo '<p>About this step: ' . $task['about'] . '</p>';
-                    echo '<p>Step deadline: ' . $task['deadline'] . '</p>';
-                    echo '<p>Step report: ' . $task['report'] . '</p>';
-                    echo '<p>Attachments: ' . $task['attachments'] . '</p>';
-                    echo '<p>Status: ' . $task['status'] . '</p>'; // Display task status
-                    // Add links for CRUD operations
-                    echo '<p>';
-                    echo '<a href="edit_task.php?id=' . $task['id'] . '">Edit</a> | ';
-                    echo '<a href="delete_task.php?id=' . $task['id'] . '">Delete</a>';
-                    echo '</p>';
-                    echo '</div>'; // Close container
-                    echo '</div>'; // Close card
-                }
-            } else {
-                echo '<p>No tasks available for your groups.</p>';
-            }
-        } else {
-            echo '<p>You are not a member of any group.</p>';
-        }
-
-        // Function to calculate the progress percentage for a task
-        function calculateProgress($task)
-        {
-            // Calculate progress based on task status
-            return ($task['status'] === 'finished') ? 100 : 0;
-        }
-        ?>
-
-
-        <!-- Add Task Button -->
-        <div class="text-center mt-3">
-            <button class="btn btn-success" data-toggle="modal" data-target="#addTaskModal">Add Task</button>
-        </div>
-
-
-        <!-- Add Task Modal -->
-        <div class="modal" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addTaskModalLabel">Add Task</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Include the form to add a new task (similar to edit_task.php) -->
-                        <form action="create_task.php" method="post">
-                            <div class="modal-body">
-                                <label for="task_name">Task Name:</label>
-                                <input type="text" name="name" required>
-
-                                <label for="step">Step:</label>
-                                <input type="text" name="step" required>
-
-                                <label for="about">About this step:</label>
-                                <textarea name="about" required></textarea>
-
-                                <label for="deadline">Step deadline:</label>
-                                <input type="datetime-local" name="deadline" required>
-
-                                <label for="report">Step report:</label>
-                                <textarea name="report" required></textarea>
-
-                                <label for="attachment">Attachments:</label>
-                                <input type="text" name="attachment" required>
-
-                                <!-- Add a hidden input field to pass the group_id -->
-                                <input type="hidden" name="group_id" value="<?php echo $groupId; ?>">
-
-                                <label for="status">Task Status:</label>
-                                <select name="status">
-                                    <option value="processing">Processing</option>
-                                    <option value="finished">Finished</option>
-                                </select>
-
-                                <button type="submit" class="btn btn-primary">Add Task</button>
-                            </div>
-                        </form>
-                    </div>
+        <form method="GET" action="stu_dashboard.php">
+            <div class="form-row align-items-center mb-3">
+                <div class="col-auto">
+                    <select class="form-control" name="searchType">
+                        <option value="courseId">Course ID</option>
+                        <option value="courseName">Course Name</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <input type="text" class="form-control" name="searchValue" placeholder="Search">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+                <div class="col-auto">
+                    <a href="stu_dashboard.php" class="btn btn-secondary">Reset</a>
                 </div>
             </div>
-        </div>
+        </form>
 
-        <?php
-        function calculateOverallProgress($conn)
-        {
-            $totalTasks = 0;
-            $completedTasks = 0;
-
-            $tasksSql = "SELECT * FROM tasks";
-            $tasksResult = $conn->query($tasksSql);
-
-            if ($tasksResult->num_rows > 0) {
-                while ($task = $tasksResult->fetch_assoc()) {
-                    $totalTasks++;
-
-                    // Check if the task is completed
-                    if ($task['status'] === 'finished') {
-                        $completedTasks++;
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($result->num_rows > 0) {
+                    while ($course = $result->fetch_assoc()) {
+                        echo '<tr>';
+                        echo '<td>' . $course['Course_id'] . '</td>';
+                        echo '<td>' . $course['name'] . '</td>';
+                        echo '<td><a href="stu_groups.php?course_id=' . $course['Course_id'] . '" class="btn btn-primary btn-sm">View Groups</a> ';
+                        echo '</tr>';
                     }
+                } else {
+                    echo '<tr><td colspan="5">No courses available.</td></tr>';
                 }
-            }
-
-            // Calculate the overall progress percentage
-            return ($totalTasks > 0) ? ($completedTasks / $totalTasks) * 100 : 0;
-        }
-        ?>
-
-
-        <script>
-// Function to update progress bars using AJAX
-function updateProgressBars() {
-    <?php
-    // Generate JavaScript code to fetch updated progress bars using AJAX
-    if (!empty($groupIds)) {
-        foreach ($groupIds as $groupId) {
-            echo "$.get('update_progress.php?groupId=$groupId', function(data) {";
-            echo "$('#progressBar_$groupId').html(data);";
-            echo "});";
-        }
-    }
-    ?>
-}
-
-// Load the progress bars when the page loads
-$(document).ready(function () {
-    updateProgressBars();
-
-    // Periodically update the progress bars
-    setInterval(function () {
-        updateProgressBars();
-    }, 10000); // Update every 10 seconds (adjust as needed)
-});
-        </script>
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
+                ?>
+            </tbody>
+        </table>
+    </div>
 
 </body>
 

@@ -2,11 +2,17 @@
 session_start();
 include('db_connection.php');
 include('ta_dashboard_header.php');
+// Include your common footer
+include('dashboard_footer.php');
 
 // Redirect to login page if not logged in
 if (!isset($_SESSION['user_email'])) {
     header("Location: index.php");
     exit();
+}
+
+if ($_SESSION['role'] != 'TA') {
+    header("Location: index.php");
 }
 
 function calculateProgress($task)

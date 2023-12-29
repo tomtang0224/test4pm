@@ -1,24 +1,19 @@
-  <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="stu_dashboard.php">Project Management system</a>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="stu_dashboard.php">Home </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="stu_group.php">Grouping</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="">Task Management</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="create_course_form.php">course Management</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="logout.php">Log Out</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="stu_dashboard.php">Project Management System</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="stu_dashboard.php">Courses</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="">Welcome, <?php echo $_SESSION['user_email']; ?></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="logout.php">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>

@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: admin_dashboard.php");
                 } elseif ($user['role'] === 'teacher') {
                     header("Location: teacher_dashboard.php");
-                } elseif ($user['role'] === 'ta') {
+                } elseif ($user['role'] === 'TA') {
                     header("Location: ta_dashboard.php");
                 } elseif ($user['role'] === 'student') {
                     header("Location: stu_dashboard.php");
