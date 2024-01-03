@@ -91,8 +91,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['id'])) {
     <div class="container">
         <h2>Edit Task</h2>
 
-        <form action="update_task.php" method="post">
+        <form action="update_task.php?" method="post">
             <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
+            <input type="hidden" name="course_id" value="<?php echo $_GET['course_id']; ?>">
 
             <div class="form-group">
                 <label for="task_name">Task Name:</label>

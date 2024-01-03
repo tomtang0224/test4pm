@@ -151,7 +151,7 @@ aria-valuemin="0" aria-valuemax="100">' . $overallProgress . '%</div>';
                         echo '<p>Step report: ' . $task['report'] . '</p>';
 
                         // Add Edit and Delete buttons for each task
-                        echo '<a href="edit_task.php?id=' . $task['id'] . '" class="btn btn-primary btn-sm">Edit</a>';
+                        echo '<a href="edit_task.php?course_id=' . $courseID . '&id=' . $task['id'] . '" class="btn btn-primary btn-sm">Edit</a>';
                         echo '<a href="delete_task.php?id=' . $task['id'] . '" class="btn btn-danger btn-sm">Delete</a>';
 
                         echo '</div>';

@@ -13,6 +13,7 @@ if (!isset($_SESSION['user_email'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $taskId = $_POST['task_id'];
+    $courseID = $_POST['course_id'];
     $task_name = $_POST['task_name'];
     $step = $_POST['step'];
     $about = $_POST['about'];
@@ -27,8 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ini_set('display_errors', 1);
 
     if ($conn->query($updateSql) === TRUE) {
-        echo "Task updated successfully";
-        header("refresh:2;url=redirect.php");
+        echo "<br>Task updated successfully";
+        header("refresh:2;url=stu_groups.php?course_id=$courseID");
         exit(); // Add exit here to stop further execution
     } else {
         echo "Error updating task: " . $conn->error;
