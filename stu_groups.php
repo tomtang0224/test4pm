@@ -166,7 +166,7 @@ aria-valuemin="0" aria-valuemax="100">' . $overallProgress . '%</div>';
                 echo '<div class="container">';
                 echo '<h4><b>Add Task</b></h4>';
                 echo '<p>Create a new task to this group.</p>';
-                echo '<a href="create_task.php?group_id=' . $groupID . '" class="btn btn-success btn-sm">Add Task</a>';
+                echo '<a href="create_task.php?course_id=' . $courseID . '&group_id=' . $groupID . '" class="btn btn-success btn-sm">Add Task</a>';
                 echo '</div>';
                 echo '</div>';
                 echo '</div>';

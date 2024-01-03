@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $report = $_POST['report'];
     $attachment = $_POST['attachment'];
     $groupId = $_POST['group_id']; // Make sure you have this value in your form
+    $courseID = $_POST['course_id'];
 
     // Validate the input (you may need to add more validation)
     if (empty($name) || empty($step) || empty($about) || empty($deadline) || empty($report) || empty($attachment) || empty($groupId)) {
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($conn->query($insertQuery) === TRUE) {
             $success_message = "Task created successfully.";
-            header("Location: redirect.php");
+            header("Location: stu_groups.php?course_id=$courseID");
         } else {
             $error_message = "Error creating task: " . $conn->error;
         }
@@ -63,7 +64,53 @@ while ($group = $groupsResult->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Task</title>
     <!-- Include Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
@@ -78,6 +125,10 @@ while ($group = $groupsResult->fetch_assoc()) {
         }
         ?>
         <form action="create_task.php" method="post">
+            
+        <input type="hidden" name="group_id" value="<?php echo $_GET['group_id']; ?>">
+        <input type="hidden" name="course_id" value="<?php echo $_GET['course_id']; ?>">
+
             <div class="form-group">
                 <label for="name">Task Name:</label>
                 <input type="text" class="form-control" name="name" required>
@@ -101,14 +152,6 @@ while ($group = $groupsResult->fetch_assoc()) {
             <div class="form-group">
                 <label for="attachment">Attachment:</label>
                 <input type="text" class="form-control" name="attachment" required>
-            </div>
-            <div class="form-group">
-                <label for="group_id">Select Group:</label>
-                <select class="form-control" name="group_id" required>
-                    <?php foreach ($groups as $group): ?>
-                        <option value="<?php echo $group['id']; ?>"><?php echo $group['name']; ?></option>
-                    <?php endforeach; ?>
-                </select>
             </div>
             <button type="submit" class="btn btn-primary">Create Task</button>
         </form>
