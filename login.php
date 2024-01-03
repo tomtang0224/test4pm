@@ -8,10 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validate the input (you may need to add more validation)
     if (empty($email) || empty($password)) {
-        echo "Both email and password are required.";
+        header("Location: index.php?error=Both email and password are required.");
+        exit();
     } else {
-       
-        
+
+
         // Assume you have a database connection
         // Replace the following with your actual database connection code
         $db_host = "localhost";
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Query to check if the user exists with the provided email
         $query = "SELECT * FROM users WHERE email=?";
-        
+
         // Prepare the statement
         $stmt = $conn->prepare($query);
 
@@ -71,13 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             } else {
                 // Invalid password
-                echo "Invalid password.";
-                header("refresh:2;url=index.php");
+                header("Location: index.php?error=Invalid password.");
+                exit();
             }
         } else {
             // User not found
-            echo "Invalid email.";
-            header("refresh:2;url=index.php");
+            header("Location: index.php?error=Invalid email.");
+            exit();
         }
 
         // Close the statement

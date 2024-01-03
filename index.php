@@ -9,10 +9,11 @@
     <style>
         /* Your styles here */
 
-        body, html {
+        body,
+        html {
             height: 100%;
             margin: 0;
-        } 
+        }
 
         h1 {
             margin: 0;
@@ -91,7 +92,7 @@
     <div class="bg-img">
         <h1>Project Management System</h1>
 
-        <?php if (isset($error)): ?>
+        <?php if (isset($error)) : ?>
             <p style="color: red;">
                 <?php echo $error; ?>
             </p>
@@ -102,10 +103,16 @@
             <input type="email" id="email" name="email" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
+            <?php if (isset($_GET['error'])) : ?>
+                <p style="color: red;">
+                    <?php echo $_GET['error']; ?>
+                </p>
+            <?php endif; ?>
             <button type="submit" class="btn">Login</button>
         </form>
     </div>
 </body>
+
 </html>
 
 
