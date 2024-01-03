@@ -1,6 +1,6 @@
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="ta_dashboard.php">Project Management System</a>
+    <a class="navbar-brand" href="ta_dashboard.php">Project Management System (TA)</a>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">

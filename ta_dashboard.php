@@ -108,6 +108,7 @@ include('dashboard_footer.php');
                         echo '<td>' . $course['Course_id'] . '</td>';
                         echo '<td>' . $course['name'] . '</td>';
                         echo '<td><a href="group_process_ta.php?course_id=' . $course['Course_id'] . '" class="btn btn-primary btn-sm">View Groups</a> ';
+                        echo '<a href="group_manage_ta.php?course_id=' . $course['Course_id'] . '" class="btn btn-primary btn-sm">Manage Groups</a></td>';
                         echo '</tr>';
                     }
                 } else {
