@@ -152,22 +152,24 @@ aria-valuemin="0" aria-valuemax="100">' . $overallProgress . '%</div>';
 
                         // Add Edit and Delete buttons for each task
                         echo '<a href="edit_task.php?course_id=' . $courseID . '&id=' . $task['id'] . '" class="btn btn-primary btn-sm">Edit</a>';
-                        echo '<a href="delete_task.php?id=' . $task['id'] . '" class="btn btn-danger btn-sm">Delete</a>';
+                        echo '<a href="delete_task.php?course_id=' . $courseID . '&id=' . $task['id'] . '" class="btn btn-danger btn-sm">Delete</a>';
 
                         echo '</div>';
                         echo '</div>';
                     }
-                    // Add Task button outside the cards
-                    echo '<div class="col-md-3">';
-                    echo '<div class="card">';
-                    echo '<div class="container">';
-                    echo '<h4><b>Add Task</b></h4>';
-                    echo '<p>Create a new task to this group.</p>';
-                    echo '<a href="create_task.php?group_id=' . $groupID . '" class="btn btn-success btn-sm">Add Task</a>';
-                    echo '</div>';
-                    echo '</div>';
-                    echo '</div>';
+                    
                 }
+
+                // Add Task button outside the cards
+                echo '<div class="col-md-3">';
+                echo '<div class="card">';
+                echo '<div class="container">';
+                echo '<h4><b>Add Task</b></h4>';
+                echo '<p>Create a new task to this group.</p>';
+                echo '<a href="create_task.php?group_id=' . $groupID . '" class="btn btn-success btn-sm">Add Task</a>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
 
             }
         } else {
