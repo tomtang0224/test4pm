@@ -1,5 +1,6 @@
 <?php
 include("db_connection.php");
+include("admin_dashboard_header.php");
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get user input

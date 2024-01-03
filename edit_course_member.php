@@ -55,6 +55,13 @@ $courseResult = $conn->query($courseQuery);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    
+
+    
+</script>
+
     <title>Edit Course Members</title>
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -87,24 +94,33 @@ $courseResult = $conn->query($courseQuery);
 
         <!-- Add form to edit course members -->
         <form action="" method="post">
-            <div class="form-group">
-                <label for="course_id">Select Course:</label>
-                <select name="course_id" id="course_id">
-                    <?php
-                    // Display available courses in the dropdown
-                    while ($course = $courseResult->fetch_assoc()) {
-                        echo "<option value='{$course['course_id']}'>{$course['name']}</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="user_emails">User Emails (one per line):</label>
-                <textarea id="user_emails" name="user_emails" rows="5" required></textarea>
-            </div>
-            <input type="hidden" name="action" value="add">
-            <button type="submit" class="btn btn-primary">Add to Course</button>
-        </form>
+    <div class="form-group">
+        <label for="course_id">Select Course:</label>
+        <select name="course_id" id="course_id">
+            <?php
+            // Display available courses in the dropdown
+            while ($course = $courseResult->fetch_assoc()) {
+                echo "<option value='{$course['course_id']}'>{$course['course_id']} - {$course['name']}</option>";
+            }
+            ?>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="user_emails">User Emails (one per line):</label>
+        <textarea id="user_emails" name="user_emails" rows="5" required></textarea>
+    </div>
+    <input type="hidden" name="action" value="add">
+    <button type="submit" class="btn btn-primary">Add to Course</button>
+
+    <!-- Add the new button -->
+    <button type="button" class="btn btn-info" id="showMembersBtn">Show Course Members</button>
+</form>
+
+<!-- Container to display course members -->
+<div id="courseMembersContainer">
+    <!-- Course members will be dynamically loaded here -->
+</div>
+
 
 
 
@@ -121,69 +137,93 @@ $courseResult = $conn->query($courseQuery);
 
         <script>
 
-            // Assuming you have a change event handler for the course dropdown
-$('#course_id').change(function () {
-    var courseId = $(this).val(); // Get the selected course ID
 
-    console.log("Selected Course ID:", courseId); // Log the selected course ID
 
-    // Perform AJAX request to get course members
-    $.ajax({
-        type: "GET",
-        url: "get_course_members.php",
-        data: { course_id: courseId },
-        success: function (response) {
-            console.log("AJAX Response:", response); // Log the AJAX response
+<script>
 
-            // Update the content with the received HTML
-            $('#courseMembersContainer').html(response);
-        },
-        error: function (error) {
-            console.error("Error fetching course members: ", error);
-        }
+$(document).ready(function () {
+    // Assuming you have a change event handler for the course dropdown
+    $('#course_id').change(function () {
+        var courseId = $(this).val(); // Get the selected course ID
+
+        console.log("Selected Course ID:", courseId); // Log the selected course ID
+
+        // Perform AJAX request to get course members
+        $.ajax({
+            type: "GET",
+            url: "get_course_members.php",
+            data: { course_id: courseId },
+            success: function (response) {
+                console.log("AJAX Response:", response); // Log the AJAX response
+
+                // Update the content with the received HTML
+                $('#courseMembersContainer').html(response);
+            },
+            error: function (error) {
+                console.error("Error fetching course members: ", error);
+            }
+        });
     });
+
+    function removeMember(userEmail) {
+        var confirmRemove = confirm("Are you sure you want to remove this member?");
+        if (confirmRemove) {
+            // Use AJAX to remove the member without reloading the page
+            $.ajax({
+                type: "POST",
+                url: "edit_course_members.php",
+                data: { user_email: userEmail, course_id: $('#course_id').val(), action: "remove" },
+                success: function (response) {
+                    // Reload the page to reflect changes
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error("Error removing member: ", error);
+                }
+            });
+        }
+    }
+
+    // Periodically update the course members list every 5 seconds
+    setInterval(function () {
+        // Perform AJAX request to get course members
+        $.ajax({
+            type: "GET",
+            url: "get_course_members.php",
+            data: { course_id: $('#course_id').val() },
+            success: function (response) {
+                // Update the content with the received HTML
+                $('#courseMembersContainer').html(response);
+            },
+            error: function (error) {
+                console.error("Error fetching course members: ", error);
+            }
+        });
+    }, 5000);
 });
 
-            function removeMember(userEmail) {
-                var confirmRemove = confirm("Are you sure you want to remove this member?");
-                if (confirmRemove) {
-                    // Use AJAX to remove the member without reloading the page
-                    $.ajax({
-                        type: "POST",
-                        url: "edit_course_members.php",
-                        data: { user_email: userEmail, course_id: $('#course_id').val(), action: "remove" },
-                        success: function (response) {
-                            // Reload the page to reflect changes
-                            location.reload();
-                        },
-                        error: function (error) {
-                            console.error("Error removing member: ", error);
-                        }
-                    });
-                }
+    // Assuming you have a change event handler for the course dropdown
+    $('#course_id').change(function () {
+        var courseId = $(this).val(); // Get the selected course ID
+
+        console.log("Selected Course ID:", courseId); // Log the selected course ID
+
+        // Perform AJAX request to get course members
+        $.ajax({
+            type: "GET",
+            url: "get_course_members.php",
+            data: { course_id: courseId },
+            success: function (response) {
+                console.log("AJAX Response:", response); // Log the AJAX response
+
+                // Update the content with the received HTML
+                $('#courseMembersContainer').html(response);
+            },
+            error: function (error) {
+                console.error("Error fetching course members: ", error);
             }
-
-            // Periodically update the course members list every 5 seconds
-            setInterval(updateCourseMembers, 5000);
-
-            // Assuming you have a change event handler for the course dropdown
-            $('#course_id').change(function () {
-                var courseId = $(this).val(); // Get the selected course ID
-                // Perform AJAX request to get course members
-                $.ajax({
-                    type: "GET",
-                    url: "get_course_members.php",
-                    data: { course_id: courseId },
-                    success: function (response) {
-                        // Update the content with the received HTML
-                        $('#course_members_container').html(response);
-                    },
-                    error: function (error) {
-                        console.error("Error fetching course members: ", error);
-                    }
-                });
-            });
-
+        });
+    });
         </script>
 </body>
 

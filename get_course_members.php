@@ -1,6 +1,6 @@
 <?php
 // Include your database connection
-include_once("db_connection.php");
+include("db_connection.php");
 
 // Check if the course_id parameter is set in the GET request
 if (isset($_GET['course_id'])) {

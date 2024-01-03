@@ -9,8 +9,10 @@ if (isset($_SESSION['role'])) {
         header("Location: admin_dashboard.php");
     } elseif ($role == 'teacher') {
         header("Location: teacher_dashboard.php");
+    } elseif ($role == 'TA') {
+        header("Location: ta_dashboard.php");
     } elseif ($role == 'student') {
-        header("Location: student_dashboard.php");
+        header("Location: stu_dashboard.php");
     }
 } else {
     // Handle cases where the role is not set

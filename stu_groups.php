@@ -62,7 +62,7 @@ function calculateGroupProgress($conn, $groupId)
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         // Periodically update the progress bars
-        setInterval(function() {
+        setInterval(function () {
             // Reload the content of the task management section using jQuery
             $("#taskManagementSection").load("dashboard.php #taskManagementSection");
         }, 10000); // Update every 10 seconds (adjust as needed)
@@ -78,7 +78,9 @@ function calculateGroupProgress($conn, $groupId)
 
 <body>
     <div class="container mt-5">
-        <h2><?php echo $_GET['course_id'] ?></h2>
+        <h2>
+            <?php echo $_GET['course_id'] ?>
+        </h2>
         <br>
 
         <?php
@@ -91,7 +93,7 @@ function calculateGroupProgress($conn, $groupId)
         $joinedGroupsResult = $conn->query($joinedGroupsQuery);
 
         $count = 0; // Initialize counter
-
+        
         if ($joinedGroupsResult->num_rows > 0) {
             while ($group = $joinedGroupsResult->fetch_assoc()) {
                 echo '<div class="col-md-3">'; // Each card takes 4 columns in medium-sized screens
@@ -115,7 +117,7 @@ function calculateGroupProgress($conn, $groupId)
                 echo '</div>'; // Close container
                 echo '</div>'; // Close card
                 echo '</div>'; // Close column
-
+        
                 // Display tasks
                 $tasksSql = "SELECT * FROM tasks WHERE group_id = '$groupID'";
                 $tasksResult = $conn->query($tasksSql);
@@ -126,8 +128,8 @@ function calculateGroupProgress($conn, $groupId)
                     $overallProgress = calculateGroupProgress($conn, $group['id']);
                     $progressColor = ($overallProgress > 50) ? 'bg-success' : 'bg-danger';
                     echo '<div class="progress-bar ' . $progressColor . '" role="progressbar" 
-                style="width: ' . $overallProgress . '%" aria-valuenow="' . $overallProgress . '" 
-                aria-valuemin="0" aria-valuemax="100">' . $overallProgress . '%</div>';
+style="width: ' . $overallProgress . '%" aria-valuenow="' . $overallProgress . '" 
+aria-valuemin="0" aria-valuemax="100">' . $overallProgress . '%</div>';
                     echo '</div>';
                 } else {
                     echo 'No tasks found for this group.';
@@ -147,10 +149,26 @@ function calculateGroupProgress($conn, $groupId)
                         echo '<p>About this step: ' . $task['about'] . '</p>';
                         echo '<p>Step deadline: ' . $task['deadline'] . '</p>';
                         echo '<p>Step report: ' . $task['report'] . '</p>';
+
+                        // Add Edit and Delete buttons for each task
+                        echo '<a href="edit_task.php?id=' . $task['id'] . '" class="btn btn-primary btn-sm">Edit</a>';
+                        echo '<a href="delete_task.php?id=' . $task['task_id'] . '" class="btn btn-danger btn-sm">Delete</a>';
+
                         echo '</div>';
                         echo '</div>';
                     }
+                    // Add Task button outside the cards
+                    echo '<div class="col-md-3">';
+                    echo '<div class="card">';
+                    echo '<div class="container">';
+                    echo '<h4><b>Add Task</b></h4>';
+                    echo '<p>Create a new task to this group.</p>';
+                    echo '<a href="create_task.php?group_id=' . $groupID . '" class="btn btn-success btn-sm">Add Task</a>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
                 }
+
             }
         } else {
             // not joined any groups, display available groups
@@ -175,7 +193,7 @@ function calculateGroupProgress($conn, $groupId)
                 $memberSql = "SELECT COUNT(*) FROM group_members WHERE group_id = '$target'";
                 $memberResult = $conn->query($memberSql);
                 $memberCount = $memberResult->fetch_row()[0]; // Fetch the count value
-
+        
                 if ($memberCount >= $group['size']) {
                     echo '<a href="stu_groups.php?course_id=' . $courseID . '" class="btn btn-secondary disabled">Group is already full</a>';
                 } else {

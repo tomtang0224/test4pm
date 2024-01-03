@@ -1,4 +1,5 @@
 <!-- Navigation Bar -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #e3f2fd;">
     <a class="navbar-brand" href="admin_dashboard.php">System Project Management (Admin)</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
