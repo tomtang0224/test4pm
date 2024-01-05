@@ -75,17 +75,24 @@ while ($member = $membersResult->fetch_assoc()) {
                 </div>
             </div>
             <div class="form-group">
-                <label for="group_member"><br>Group Members (User Email):</label>
+                <label for="group_member"><br>Group Members:</label>
                 <select class="form-control" name="group_members[]" size="15" multiple required>
                     <?php
                     // Query to fetch user emails
-                    $query = "SELECT email FROM users";
+                    $query = "SELECT email, username FROM users";
                     $result = $conn->query($query);
+
+                    $details = array(
+                        'name' => null,
+                        'email' => null,
+                    );
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $selected = (in_array($row['email'], $existingMembers)) ? 'selected' : '';
-                            echo "<option value='{$row['email']}' $selected>{$row['email']}</option>";
+                            $details['name'] = $row['username'];
+                            $details['email'] = $row['email'];
+                            $selected = in_array($row['email'], $existingMembers) ? 'selected' : '';
+                            echo "<option value='{$row['email']}' $selected>{$row['username']} ({$row['email']})</option>";
                         }
                     } else {
                         echo "<option value=''>No users found</option>";

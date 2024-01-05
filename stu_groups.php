@@ -105,12 +105,12 @@ function calculateGroupProgress($conn, $groupId)
 
                 // Query to fetch group members
                 $groupID = $group['id'];
-                $groupMembersQuery = "SELECT * FROM group_members WHERE group_id = '$groupID'";
+                $groupMembersQuery = "SELECT * FROM group_members JOIN users ON group_members.user_email = users.email WHERE group_id = '$groupID'";
                 $groupMembersResult = $conn->query($groupMembersQuery);
 
                 echo '<p><b>Group Members:</b><br>';
                 while ($member = $groupMembersResult->fetch_assoc()) {
-                    echo $member['user_email'] . '<br>';
+                    echo $member['username'] . '<br>';
                 }
                 echo '</p>';
 
@@ -161,7 +161,7 @@ aria-valuemin="0" aria-valuemax="100">' . $overallProgress . '%</div>';
                 }
 
                 // Add Task button outside the cards
-                echo '<div class="col-md-3">';
+                echo '<br><div class="col-md-3">';
                 echo '<div class="card">';
                 echo '<div class="container">';
                 echo '<h4><b>Add Task</b></h4>';

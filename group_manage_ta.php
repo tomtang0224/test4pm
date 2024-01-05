@@ -85,9 +85,10 @@ include('dashboard_footer.php');
                     {
                         global $conn;
 
-                        $query = "SELECT groups.*, group_members.user_email 
+                        $query = "SELECT groups.*, group_members.user_email, users.username
                           FROM groups
                           LEFT JOIN group_members ON groups.id = group_members.group_id
+                          JOIN users ON group_members.user_email = users.email
                           WHERE groups.id = ?";
 
                         $stmt = $conn->prepare($query);
@@ -101,7 +102,7 @@ include('dashboard_footer.php');
                             'course_id' => null,
                             'name' => null,
                             'size' => null,
-                            'user_email' => array(), // Store user emails in an array
+                            'username' => array(), // Store user emails in an array
                         );
 
                         while ($row = $result->fetch_assoc()) {
@@ -110,8 +111,8 @@ include('dashboard_footer.php');
                             $groupDetails['name'] = $row['name'];
                             $groupDetails['size'] = $row['size'];
 
-                            if ($row['user_email'] !== null) {
-                                $groupDetails['user_email'][] = $row['user_email'];
+                            if ($row['username'] !== null) {
+                                $groupDetails['username'][] = $row['username'];
                             }
                         }
 
@@ -145,8 +146,8 @@ include('dashboard_footer.php');
 
                             // Display group members
                             echo '<td>';
-                            if (!empty($groupDetails['user_email'])) {
-                                echo implode(', ', $groupDetails['user_email']);
+                            if (!empty($groupDetails['username'])) {
+                                echo implode(', ', $groupDetails['username']);
                             } else {
                                 echo 'No members';
                             }

@@ -9,7 +9,7 @@
         </ul>
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="">Welcome, <?php echo $_SESSION['user_email']; ?></a>
+                <a class="nav-link" href="">Welcome, <?php echo $_SESSION['username']; ?></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="logout.php">Logout</a>
