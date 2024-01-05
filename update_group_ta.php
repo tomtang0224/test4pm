@@ -29,13 +29,6 @@ function getGroupDetails($groupId) {
     return $groupDetails;
 }
 
-// Example usage
-$groupId = 1; // Replace with the actual group ID
-$groupDetails = getGroupDetails($groupId);
-
-// Print group details and members
-print_r($groupDetails);
-
 
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
