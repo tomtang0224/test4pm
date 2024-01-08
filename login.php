@@ -14,18 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         // Assume you have a database connection
-        // Replace the following with your actual database connection code
-        $db_host = "sql200.infinityfree.com";
-        $db_user = "if0_35745673";
-        $db_password = "KvbowtUDBvC";
-        $db_name = "if0_35745673_project_management_system";
-
-        $conn = new mysqli($db_host, $db_user, $db_password, $db_name);
-
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+        include('db_connection.php');
 
         // Prevent SQL injection (use prepared statements)
         $email = $conn->real_escape_string($email);
